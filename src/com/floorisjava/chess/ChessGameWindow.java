@@ -4,9 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,7 +21,7 @@ import javax.swing.border.Border;
 
 public class ChessGameWindow {
 	
-	public static void create() {
+	public static void create(ChessGame game) {
 		JFrame frame = new JFrame("Chess Game");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -26,7 +32,7 @@ public class ChessGameWindow {
 		textLabel.setPreferredSize(new Dimension(200, 100));
 		frame.getContentPane().add(textLabel, BorderLayout.NORTH);
 		
-		frame.getContentPane().add(createChessGrid(), BorderLayout.CENTER);
+		frame.getContentPane().add(createChessGrid(game), BorderLayout.CENTER);
 		
 		JLabel textLabel2 = new JLabel("White", SwingConstants.CENTER); 
 		textLabel2.setPreferredSize(new Dimension(200, 100));
@@ -54,7 +60,7 @@ public class ChessGameWindow {
 	    return i > 0 && i < 27 ? String.valueOf((char)(i + 64)) : null;
 	}
 
-	private static JPanel createChessGrid() {
+	private static JPanel createChessGrid(ChessGame game) {
 		GridLayout grid = new GridLayout(8, 8);
 		
 		JPanel panel = new JPanel();				
@@ -71,7 +77,7 @@ public class ChessGameWindow {
 				JPanel cell = new JPanel();
 				cell.setLayout(new BorderLayout());
 				cell.setBorder(blackline);			
-				cell.setSize(new Dimension(100, 100));
+				cell.setPreferredSize(new Dimension(100, 100));
 				
 				// Set background
 				cell.setOpaque(true);
@@ -85,19 +91,49 @@ public class ChessGameWindow {
 				
 				
 				// Add cell reference labels
+				JLabel leftLabel = new JLabel("", SwingConstants.CENTER);
+				cell.add(leftLabel, BorderLayout.WEST);
+				
+				JLabel bottomLabel = new JLabel("", SwingConstants.RIGHT);
+				cell.add(bottomLabel, BorderLayout.SOUTH);
+				
+				JLabel rightLabel = new JLabel("");
+				cell.add(rightLabel, BorderLayout.EAST);
+				
+				JLabel topLabel = new JLabel("", SwingConstants.LEFT);
+				cell.add(topLabel, BorderLayout.NORTH);
+				
+				leftLabel.setPreferredSize(new Dimension(12, 100));
+				bottomLabel.setPreferredSize(new Dimension(100, 12));
+				rightLabel.setPreferredSize(new Dimension(12, 100));
+				topLabel.setPreferredSize(new Dimension(100, 12));
+				
 				if (j == 1) {
-					JLabel rowLabel = new JLabel("", SwingConstants.CENTER);
-					rowLabel.setText(i + "");
-					rowLabel.setVerticalAlignment(SwingConstants.TOP);
-					cell.add(rowLabel, BorderLayout.WEST);
+					topLabel.setText(i + "");
+					topLabel.setVerticalAlignment(SwingConstants.TOP);					
 				}
 				
-				if (i == 1) {
-					JLabel rowLabel = new JLabel("", SwingConstants.RIGHT);
-					rowLabel.setText(getCharForNumber(j));
-					rowLabel.setVerticalAlignment(SwingConstants.BOTTOM);
-					cell.add(rowLabel, BorderLayout.SOUTH);
+				
+				if (i == 1) {					
+					bottomLabel.setText(getCharForNumber(j));
+					bottomLabel.setVerticalAlignment(SwingConstants.BOTTOM);					
 				}
+				
+				// Add chess piece if on this square
+				if (game.getGrid().get(i-1).get(j-1) != null) {
+					ChessPiece piece = game.getGrid().get(i-1).get(j-1);
+					
+					try {
+						BufferedImage myPicture = ImageIO.read(new File(piece.getImagePath()));
+						JLabel picLabel = new JLabel(new ImageIcon(myPicture.getScaledInstance(55, 55, Image.SCALE_DEFAULT)));
+						cell.add(picLabel, BorderLayout.CENTER);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				
 				
 				panel.add(cell);
 			}
