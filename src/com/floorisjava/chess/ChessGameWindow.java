@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -42,9 +41,14 @@ public class ChessGameWindow {
 		paddingLeftLabel.setPreferredSize(new Dimension(100, 200));
 		frame.getContentPane().add(paddingLeftLabel, BorderLayout.WEST);
 		
-		JLabel paddingRightLabel = new JLabel("", SwingConstants.CENTER); 
-		paddingRightLabel.setPreferredSize(new Dimension(100, 200));
-		frame.getContentPane().add(paddingRightLabel, BorderLayout.EAST);
+		JPanel rightPanel = new JPanel();
+		rightPanel.setLayout(new BorderLayout());
+		rightPanel.setPreferredSize(new Dimension(100, 200));
+		TimerLabel blackTimerLabel = new TimerLabel(300000, SwingConstants.CENTER, game, frame, PieceColor.Black);
+		TimerLabel whiteTimerLabel = new TimerLabel(300000, SwingConstants.CENTER, game, frame, PieceColor.White);		
+		rightPanel.add(blackTimerLabel, BorderLayout.NORTH);
+		rightPanel.add(whiteTimerLabel, BorderLayout.SOUTH);
+		frame.getContentPane().add(rightPanel, BorderLayout.EAST);
 		
 		frame.pack();
 		
@@ -54,6 +58,8 @@ public class ChessGameWindow {
 		frame.setLocationRelativeTo(null);
 		
 		frame.setVisible(true);
+		
+		whiteTimerLabel.startTimer();	
 	}
 	
 	private static String getCharForNumber(int i) {

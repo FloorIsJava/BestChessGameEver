@@ -3,6 +3,9 @@ package com.floorisjava.chess;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 public class ChessGame {
 	
 	private List<List<ChessPiece>> grid = new ArrayList<List<ChessPiece>>();
@@ -64,6 +67,13 @@ public class ChessGame {
 
 	public List<List<ChessPiece>> getGrid() {
 		return grid;
+	}
+
+	public void lose(JFrame window, PieceColor color) {
+		
+		JOptionPane.showMessageDialog(window, color.name() + " lost the game on time.");
+		System.exit(0);
+		
 	}
 
 }
